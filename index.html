@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ethio Bingo</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
         body { background-color: #242424; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; max-width: 350px; margin: 0 auto; }
@@ -17,7 +18,7 @@
 <body>
     <h1 class="header">ETHIO BINGO</h1>
     <div id="bingo-grid" class="grid">
-        </div>
+    </div>
     <button onclick="checkBingo()">CHECK BINGO!</button>
 
     <script>
@@ -37,6 +38,10 @@
         function checkBingo() {
             tg.showAlert("Checking your numbers...");
         }
+
+        // Example: You can now use socket.io here
+        // const socket = io('http://localhost:3000');
+        // socket.on('connect', () => { console.log('Connected to server!'); });
     </script>
 </body>
 </html>
