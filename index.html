@@ -31,7 +31,7 @@
         tg.expand();
 
         // PASTE YOUR RENDER URL HERE
-        const socket = io("https://your-backend-link.onrender.com");
+        const socket = io("https://adola-bingo.onrender.com");
 
         socket.on('numberCalled', (num) => {
             document.getElementById('current-call').innerText = num;
