@@ -1,56 +1,34 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-
-const app = express();
-const server = http.createServer(app);
-
-// This part connects your Frontend and Backend
-const io = new Server(server, {
-    cors: { 
-        origin: "*", 
-        methods: ["GET", "POST"]
-    }
-});
-
-let currentNumber = null;
-let gameHistory = [];
+// Replace with your real ID from @userinfobot
+const MESFIN_ADMIN_ID = "8025426736"; 
 
 io.on('connection', (socket) => {
-    console.log('A player joined Adola Bingo');
     
-    // Send the current game state to the new player so they aren't behind
-    socket.emit('gameState', { currentNumber, gameHistory });
-
-    socket.on('drawNumber', () => {
-        // Logic to pick a number between 1-75 that hasn't been picked yet
-        if (gameHistory.length >= 75) {
-            io.emit('statusUpdate', 'Game Over - All numbers called!');
-            return;
-        }
-
-        let newNumber;
-        do {
-            newNumber = Math.floor(Math.random() * 75) + 1;
-        } while (gameHistory.includes(newNumber));
-
-        currentNumber = newNumber;
-        gameHistory.push(newNumber);
+    // 1. Handle Deposit Submission
+    socket.on('submitDeposit', async (data) => {
+        // Sends the player's info and SMS to your Admin view
+        console.log(`Deposit Request from ${data.userName}: ${data.smsText}`);
         
-        // Broadcast the number to EVERYONE connected
-        io.emit('numberCalled', newNumber);
+        // Notify Mesfin (The Admin)
+        io.to(MESFIN_ADMIN_ID).emit('adminNotification', {
+            player: data.userName,
+            playerId: data.tgId,
+            sms: data.smsText
+        });
     });
 
-    // Reset game logic
-    socket.on('resetGame', () => {
-        currentNumber = null;
-        gameHistory = [];
-        io.emit('gameState', { currentNumber, gameHistory });
-        io.emit('statusUpdate', 'Game Reset by Admin');
+    // 2. The Approval Logic (The "Incredible" Part)
+    socket.on('approveByAdmin', async (data) => {
+        // Security check: Only Mesfin can approve
+        if (socket.handshake.query.adminKey === "SECRET_ADOLA_KEY") { 
+            const user = await User.findOne({ tgId: data.playerId });
+            if (user) {
+                user.balance += parseFloat(data.amount);
+                await user.save();
+                
+                // Tell the player the money is in their wallet!
+                io.emit(`balanceUpdate_${data.playerId}`, user.balance);
+                console.log(`Approved ${data.amount} for ${user.name}`);
+            }
+        }
     });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`Adola Bingo Server is running on port ${PORT}`);
 });
