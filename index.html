@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ethio Bingo</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { background-color: #242424; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; max-width: 350px; margin: 0 auto; }
+        .cell { background-color: #444; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 5px; font-size: 1.2rem; }
+        .cell.selected { background-color: #e67e22; color: white; }
+        .header { color: #f1c40f; margin-bottom: 20px; }
+        button { background-color: #2ecc71; border: none; color: white; padding: 15px 30px; border-radius: 10px; margin-top: 20px; font-size: 1rem; }
+    </style>
+</head>
+<body>
+    <h1 class="header">ETHIO BINGO</h1>
+    <div id="bingo-grid" class="grid">
+        </div>
+    <button onclick="checkBingo()">CHECK BINGO!</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Makes the app full screen
+
+        const grid = document.getElementById('bingo-grid');
+        for (let i = 1; i <= 25; i++) {
+            let cell = document.createElement('div');
+            cell.className = 'cell';
+            // Simple random number for now
+            cell.innerText = Math.floor(Math.random() * 75) + 1;
+            cell.onclick = () => cell.classList.toggle('selected');
+            grid.appendChild(cell);
+        }
+
+        function checkBingo() {
+            tg.showAlert("Checking your numbers...");
+        }
+    </script>
+</body>
+</html>
