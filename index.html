@@ -58,6 +58,35 @@
             }
         }
         generateCard();
+        <div id="deposit-modal" style="display:none; position:fixed; top:20%; left:5%; width:90%; background:#222; padding:20px; border:2px solid gold; border-radius:15px; z-index:1000;">
+    <h3>Deposit ETB</h3>
+    <p>Transfer to 0979240665 (Mesfin)</p>
+    <textarea id="sms-input" placeholder="Paste the confirmation SMS here..." style="width:100%; height:100px; background:#333; color:white; border-radius:8px;"></textarea>
+    <br><br>
+    <button onclick="sendDeposit()" style="background:green; color:white; width:100%;">SUBMIT TO MESFIN</button>
+    <button onclick="document.getElementById('deposit-modal').style.display='none'" style="background:red; color:white; width:100%; margin-top:10px;">CANCEL</button>
+</div>
+
+<script>
+function promptDeposit() {
+    document.getElementById('deposit-modal').style.display = 'block';
+}
+
+function sendDeposit() {
+    const text = document.getElementById('sms-input').value;
+    if(text.length < 10) return alert("Please paste the full SMS");
+    
+    socket.emit('submitDeposit', {
+        smsText: text,
+        userName: tg.initDataUnsafe.user.first_name,
+        tgId: tg.initDataUnsafe.user.id
+    });
+    
+    document.getElementById('deposit-modal').style.display = 'none';
+    tg.showAlert("ጥያቄዎ ተልኳል! Mesfin ሲያረጋግጥ ብሩ ይገባል።");
+}
+</script>
+
     </script>
 </body>
 </html>
